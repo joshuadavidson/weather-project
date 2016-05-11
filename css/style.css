@@ -2,29 +2,89 @@ body {
   font-family: 'Open-Sans', sans-serif;
   background: transparent;
   color: black;
+  text-shadow: 0px 0px 20px rgb(180, 180, 180);
+  font-weight: bold;
 }
-h2 {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-a {
-  text-decoration: none;
-}
+a {}
 a:link {
   color: black;
+  text-decoration: underline;
 }
 a:visited {
   color: black;
 }
 a:hover {
-  color: rgb(50, 50, 50);
+  color: rgb(100, 100, 100);
 }
 a:active {
-  color: white;
+  color: rgb(100, 100, 100);
+}
+video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-height: 100%;
+  min-width: 100%;
+  width: auto;
+  height: auto;
+  z-index: 1;
 }
 
 /* Created classes*/
 
+.background {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 1;
+  display: none;
+}
+.content {
+  z-index: 2;
+  position: absolute;
+  background-color: rgba(150, 150, 150, 0.5);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.selected {
+  font-weight: bold;
+  font-size: 18px;
+}
+.icon-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Created IDs */
+
+#temp {
+  font-weight: bold;
+  font-size: 30px;
+}
+#weatherBlock {
+  display: none;
+}
+#creditsBlock {
+  display: none;
+  font-size: 12px;
+}
+
+/* Modified bootstrap classes */
+
+.panel {
+  background-color: white;
+  border-color: white;
+}
+.row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
 
 /*
 @media (min-width: 992px) {
@@ -42,19 +102,3 @@ a:active {
   }
 }
 */
-
-.icon-link {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Modified bootstrap classes */
-
-.panel {
-  background-color: white;
-  border-color: white;
-}
-.row {
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
