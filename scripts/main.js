@@ -98,15 +98,15 @@ function getUserPosition() {
 
 //find user location with Reverse Geocode from google
 function getUserLocation() {
-  let assembledURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + userData.position.lat + "," + userData.position.lon + "&key=AIzaSyCP8GLrC7_6nQYpBJFfTn4YWfz8G42y80g"
+  var assembledURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + userData.position.lat + "," + userData.position.lon + "&key=AIzaSyCP8GLrC7_6nQYpBJFfTn4YWfz8G42y80g"
   $.ajax({
     url: assembledURL,
     dataType: 'json',
     async: true,
     success: function(json) {
       //find the city, state, and country from google geocode results
-      for (let i = 0; i < json.results[0].address_components.length; i++) {
-        for (let j = 0; j < json.results[0].address_components[i].types.length; j++) {
+      for (var i = 0; i < json.results[0].address_components.length; i++) {
+        for (var j = 0; j < json.results[0].address_components[i].types.length; j++) {
           var currType = json.results[0].address_components[i].types[j];
           switch (currType) {
             case "country":
@@ -134,7 +134,7 @@ function getUserLocation() {
 }
 
 function getUserWeather() {
-  let assembledURL = "https://api.forecast.io/forecast/5d462c19218fb1f2697e53fefda9aac7/" + userData.position.lat + "," + userData.position.lon;
+  var assembledURL = "https://api.forecast.io/forecast/5d462c19218fb1f2697e53fefda9aac7/" + userData.position.lat + "," + userData.position.lon;
   $.ajax({
     url: assembledURL,
     dataType: 'jsonp',
@@ -206,5 +206,14 @@ $(document).ready(function() {
       $("#degC").removeClass().addClass("selected");
       printUserData("metric");
     }
+  });
+
+  //while results are loading inform the user
+  $('#loading-img').hide();
+  $(document).ajaxStart(function() {
+    $("#loading-img").show();
+  });
+  $(document).ajaxStop(function() {
+    $("#loading-img").hide();
   });
 });
