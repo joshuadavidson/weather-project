@@ -91,7 +91,7 @@ function getUserPosition() {
 
   //check if geolocation is enabled
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(posFromBrowser, posFromIP); //try browser first then attempt IP
+    navigator.geolocation.getCurrentPosition(posFromBrowser, posFromIP, {timeout: 1000}); //try browser first then attempt IP, set timeout to 1 sec for Safari hangups
   } else { //if geolocation not available just use IP
     posFromIP();
   }
