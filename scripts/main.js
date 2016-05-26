@@ -30,20 +30,21 @@ var userData = {
   }
 };
 
+//MOV source added first for safari browser support
 var videoTagLookup = {
-  "clear-day": '<video poster="./img/clear-day.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/clear-day.mp4" type="video/mp4"></video>',
-  "clear-night": '<video poster="./img/clear-night.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/clear-night.mp4" type="video/mp4"></video>',
-  "rain": '<video poster="./img/rain.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/rain.mp4" type="video/mp4"></video>',
-  "snow": '<video poster="./img/snow.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/snow.mp4" type="video/mp4"></video>',
-  "sleet": '<video poster="./img/snow.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/snow.mp4" type="video/mp4"></video>',
-  "wind": '<video poster="./img/wind.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/wind.mp4" type="video/mp4"></video>',
-  "fog": '<video poster="./img/fog.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/fog.mp4" type="video/mp4"></video>',
-  "cloudy": '<video poster="./img/cloudy.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/cloudy.mp4" type="video/mp4"></video>',
-  "partly-cloudy-day": '<video poster="./img/partly-cloudy-day.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/partly-cloudy-day.mp4" type="video/mp4"></video>',
-  "partly-cloudy-night": '<video poster="./img/partly-cloudy-night.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/partly-cloudy-night.mp4" type="video/mp4"></video>',
-  "hail": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
-  "thunderstorm": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
-  "tornado": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>'
+  "clear-day": '<video poster="./img/clear-day.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/clear-day.mov" type="video/mov"><source id="bgVideo" src="./img/clear-day.mp4" type="video/mp4"></video>',
+  "clear-night": '<video poster="./img/clear-night.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/clear-night.mov" type="video/mov"><source id="bgVideo" src="./img/clear-night.mp4" type="video/mp4"></video>',
+  "rain": '<video poster="./img/rain.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/rain.mov" type="video/mov"><source id="bgVideo" src="./img/rain.mp4" type="video/mp4"></video>',
+  "snow": '<video poster="./img/snow.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/snow.mov" type="video/mov"><source id="bgVideo" src="./img/snow.mp4" type="video/mp4"></video>',
+  "sleet": '<video poster="./img/snow.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/snow.mov" type="video/mov"><source id="bgVideo" src="./img/snow.mp4" type="video/mp4"></video>',
+  "wind": '<video poster="./img/wind.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/wind.mov" type="video/mov"><source id="bgVideo" src="./img/wind.mp4" type="video/mp4"></video>',
+  "fog": '<video poster="./img/fog.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/fog.mov" type="video/mov"><source id="bgVideo" src="./img/fog.mp4" type="video/mp4"></video>',
+  "cloudy": '<video poster="./img/cloudy.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/cloudy.mov" type="video/mov"><source id="bgVideo" src="./img/cloudy.mp4" type="video/mp4"></video>',
+  "partly-cloudy-day": '<video poster="./img/partly-cloudy-day.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/partly-cloudy-day.mov" type="video/mov"><source id="bgVideo" src="./img/partly-cloudy-day.mp4" type="video/mp4"></video>',
+  "partly-cloudy-night": '<video poster="./img/partly-cloudy-night.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/partly-cloudy-night.mov" type="video/mov"><source id="bgVideo" src="./img/partly-cloudy-night.mp4" type="video/mp4"></video>',
+  "hail": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
+  "thunderstorm": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
+  "tornado": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>'
 }
 
 var iconLookup = {
@@ -209,7 +210,7 @@ $(document).ready(function() {
   });
 
   //while results are loading inform the user
-  $('#loading-img').hide();
+//  $('#loading-img').hide();
   $(document).ajaxStart(function() {
     $("#loading-img").show();
   });
