@@ -45,7 +45,7 @@ var videoTagLookup = {
   "hail": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
   "thunderstorm": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
   "tornado": '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>'
-}
+};
 
 var iconLookup = {
   "clear-day": "wi-forecast-io-clear-day",
@@ -61,7 +61,7 @@ var iconLookup = {
   "hail": "wi-forecast-io-hail",
   "thunderstorm": "wi-forecast-io-thunderstorm",
   "tornado": "wi-forecast-io-tornado"
-}
+};
 
 function getUserPosition() {
 
@@ -70,7 +70,7 @@ function getUserPosition() {
     userData.position.lat = position.coords.latitude;
     userData.position.lon = position.coords.longitude;
     getUserLocation();
-  };
+  }
 
   //get position via IP
   function posFromIP() {
@@ -99,7 +99,7 @@ function getUserPosition() {
 
 //find user location with Reverse Geocode from google
 function getUserLocation() {
-  var assembledURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + userData.position.lat + "," + userData.position.lon + "&key=AIzaSyCP8GLrC7_6nQYpBJFfTn4YWfz8G42y80g"
+  var assembledURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + userData.position.lat + "," + userData.position.lon + "&key=AIzaSyCP8GLrC7_6nQYpBJFfTn4YWfz8G42y80g";
   $.ajax({
     url: assembledURL,
     dataType: 'json',
@@ -153,7 +153,7 @@ function getUserWeather() {
       printUserData("imperial");
     },
     error: function() {
-      alert("Unable to fetch weather from forecast.io.")
+      alert("Unable to fetch weather from forecast.io.");
     }
   });
 }
