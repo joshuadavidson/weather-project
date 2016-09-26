@@ -135,7 +135,7 @@ function getUserLocation() {
 }
 
 function getUserWeather() {
-  var assembledURL = "https://api.forecast.io/forecast/5d462c19218fb1f2697e53fefda9aac7/" + userData.position.lat + "," + userData.position.lon;
+  var assembledURL = "https://api.darksky.net/forecast/5d462c19218fb1f2697e53fefda9aac7/" + userData.position.lat + "," + userData.position.lon;
   $.ajax({
     url: assembledURL,
     dataType: 'jsonp',
