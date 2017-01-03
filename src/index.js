@@ -187,14 +187,14 @@ function getUserLocation(coords) {
             const currType = json.results[0].address_components[i].types[j];
             switch (currType) {
               case 'country':
-              userData.location.country = json.results[0].address_components[i].short_name;
-              break;
+                userData.location.country = json.results[0].address_components[i].short_name;
+                break;
               case 'administrative_area_level_1':
-              userData.location.state = json.results[0].address_components[i].short_name;
-              break;
+                userData.location.state = json.results[0].address_components[i].short_name;
+                break;
               case 'locality':
-              userData.location.city = json.results[0].address_components[i].short_name;
-              break;
+                userData.location.city = json.results[0].address_components[i].short_name;
+                break;
               // no default
             }
           }
