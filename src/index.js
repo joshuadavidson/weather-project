@@ -86,41 +86,55 @@ const iconLookup = {
   tornado: 'wi-forecast-io-tornado',
 };
 
-function getUserPosition() {
-  // get position from browser
-  function posFromBrowser(position) {
-    userData.position.lat = position.coords.latitude;
-    userData.position.lon = position.coords.longitude;
-    getUserLocation();
-  }
+function printUserData(unitSystem) {
+  // Fade all the data in at once
+  $('#weatherBlock').fadeIn(1000);
+  $('#creditsBlock').fadeIn(1000);
+  $('.background').fadeIn(1000);
 
-  // get position via IP
-  function posFromIP() {
-    $.ajax({
-      url: 'https://freegeoip.net/json/',
-      dataType: 'json',
-      async: true,
-      success(ipLoc) {
-        userData.position.lat = ipLoc.latitude;
-        userData.position.lon = ipLoc.longitude;
-        getUserLocation();
-      },
-      error() {
-        window.alert('Unable to determine location.');
-      },
-    });
-  }
+  // Update all data while fade is working
+  $('#locationText').html(userData.location.locationText);
+  $('#summary').html(userData.weather.summary);
+  $('#temp').html(Math.round(10 * userData.weather[unitSystem].temp) / 10);
+  $('#humidity').html(`${Math.round(100 * userData.weather.humidity)}%`);
+  $('#precipProb').html(`${Math.round(100 * userData.weather.precipProb)}%`);
+  $('#windSpeed').html(`${Math.round(10 * userData.weather[unitSystem].windSpeed) / 10} ${userData.weather[unitSystem].windSpeedUnits}`);
+  $('#weatherIcon').removeClass().addClass(`wi ${iconLookup[userData.weather.icon]} fa-5x`);
 
-  // check if geolocation is enabled
-  if (navigator.geolocation) {
-    // try browser first then attempt IP, set timeout to 1 sec for Safari hangups
-    navigator.geolocation.getCurrentPosition(posFromBrowser, posFromIP, { timeout: 1000 });
+  // update the background by looking at the weather icon only if it is not present
+  // this if check prevents reload of background if only the units were changed
+  if ($('.background').children('video').length === 0) {
+    $('.background').html(videoTagLookup[userData.weather.icon]);
   }
+}
 
-  // if geolocation not available just use IP
-  else {
-    posFromIP();
-  }
+function getMetricUserData() {
+  userData.weather.metric.temp = ((userData.weather.imperial.temp - 32) * 5) / 9;
+  userData.weather.metric.windSpeed = userData.weather.imperial.windSpeed * 1.609344;
+}
+
+function getUserWeather() {
+  const assembledURL = `https://api.darksky.net/forecast/5d462c19218fb1f2697e53fefda9aac7/${userData.position.lat},${userData.position.lon}`;
+  $.ajax({
+    url: assembledURL,
+    dataType: 'jsonp',
+    async: true,
+    success(json) {
+      userData.weather.timeStampWeather = json.currently.time;
+      userData.weather.summary = json.currently.summary;
+      userData.weather.humidity = json.currently.humidity;
+      userData.weather.precipProb = json.currently.precipProbability;
+      userData.weather.icon = json.currently.icon;
+
+      userData.weather.imperial.temp = json.currently.temperature;
+      userData.weather.imperial.windSpeed = json.currently.windSpeed;
+      getMetricUserData(); // Convert imperial data to metric
+      printUserData('imperial');
+    },
+    error() {
+      window.alert('Unable to fetch weather from forecast.io.');
+    },
+  });
 }
 
 // find user location with Reverse Geocode from google
@@ -162,55 +176,41 @@ function getUserLocation() {
   });
 }
 
-function getUserWeather() {
-  const assembledURL = `https://api.darksky.net/forecast/5d462c19218fb1f2697e53fefda9aac7/${userData.position.lat},${userData.position.lon}`;
-  $.ajax({
-    url: assembledURL,
-    dataType: 'jsonp',
-    async: true,
-    success(json) {
-      userData.weather.timeStampWeather = json.currently.time;
-      userData.weather.summary = json.currently.summary;
-      userData.weather.humidity = json.currently.humidity;
-      userData.weather.precipProb = json.currently.precipProbability;
-      userData.weather.icon = json.currently.icon;
 
-      userData.weather.imperial.temp = json.currently.temperature;
-      userData.weather.imperial.windSpeed = json.currently.windSpeed;
-      getMetricUserData(); // Convert imperial data to metric
-      printUserData('imperial');
-    },
-    error() {
-      window.alert('Unable to fetch weather from forecast.io.');
-    },
-  });
-}
+function getUserPosition() {
+  // get position from browser
+  function posFromBrowser(position) {
+    userData.position.lat = position.coords.latitude;
+    userData.position.lon = position.coords.longitude;
+    getUserLocation();
+  }
 
-function getMetricUserData() {
-  userData.weather.metric.temp = ((userData.weather.imperial.temp - 32) * 5) / 9;
-  userData.weather.metric.windSpeed = userData.weather.imperial.windSpeed * 1.609344;
-}
+  // get position via IP
+  function posFromIP() {
+    $.ajax({
+      url: 'https://freegeoip.net/json/',
+      dataType: 'json',
+      async: true,
+      success(ipLoc) {
+        userData.position.lat = ipLoc.latitude;
+        userData.position.lon = ipLoc.longitude;
+        getUserLocation();
+      },
+      error() {
+        window.alert('Unable to determine location.');
+      },
+    });
+  }
 
+  // check if geolocation is enabled
+  if (navigator.geolocation) {
+    // try browser first then attempt IP, set timeout to 1 sec for Safari hangups
+    navigator.geolocation.getCurrentPosition(posFromBrowser, posFromIP, { timeout: 1000 });
+  }
 
-function printUserData(unitSystem) {
-  // Fade all the data in at once
-  $('#weatherBlock').fadeIn(1000);
-  $('#creditsBlock').fadeIn(1000);
-  $('.background').fadeIn(1000);
-
-  // Update all data while fade is working
-  $('#locationText').html(userData.location.locationText);
-  $('#summary').html(userData.weather.summary);
-  $('#temp').html(Math.round(10 * userData.weather[unitSystem].temp) / 10);
-  $('#humidity').html(`${Math.round(100 * userData.weather.humidity)}%`);
-  $('#precipProb').html(`${Math.round(100 * userData.weather.precipProb)}%`);
-  $('#windSpeed').html(`${Math.round(10 * userData.weather[unitSystem].windSpeed) / 10} ${userData.weather[unitSystem].windSpeedUnits}`);
-  $('#weatherIcon').removeClass().addClass(`wi ${iconLookup[userData.weather.icon]} fa-5x`);
-
-  // update the background by looking at the weather icon only if it is not present
-  // this if check prevents reload of background if only the units were changed
-  if ($('.background').children('video').length === 0) {
-    $('.background').html(videoTagLookup[userData.weather.icon]);
+  // if geolocation not available just use IP
+  else {
+    posFromIP();
   }
 }
 
