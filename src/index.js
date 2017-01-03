@@ -4,11 +4,6 @@
 /* global navigator document */
 
 const userData = {
-  position: {
-    lat: 0,
-    lon: 0,
-  },
-
   location: {
     city: '',
     state: '',
@@ -67,7 +62,7 @@ const videoTagLookup = {
 
   thunderstorm: '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
 
-  tornado: '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></video>',
+  tornado: '<video poster="./img/thunderstorm.jpg" preload="auto" autoplay="true" loop="loop" muted="muted"><source id="bgVideo" src="./img/thunderstorm.mov" type="video/mov"><source id="bgVideo" src="./img/thunderstorm.mp4" type="video/mp4"></videogit>',
 };
 
 const iconLookup = {
@@ -85,6 +80,140 @@ const iconLookup = {
   thunderstorm: 'wi-forecast-io-thunderstorm',
   tornado: 'wi-forecast-io-tornado',
 };
+
+function getUserPosition() {
+  return new Promise((resolve, reject) => {
+    // GetCurrrentPosition success callback
+    // position pulled from browser
+    function posFromBrowser(position) {
+      resolve({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+      });
+    }
+
+    // GetCurrrentPosition failure callback
+    // Position needed from IP
+    function posFromIP() {
+      // Make a call to freegeoip to get Coords
+      $.ajax({
+        url: 'https://freegeoip.net/json/',
+        dataType: 'json',
+        async: true,
+      })
+
+      // Coords successfully obtained from freegeoip
+      .then((data) => {
+        resolve({
+          lat: data.latitude,
+          lon: data.longitude,
+        });
+      })
+
+      // Coords not obtained
+      .catch(() => {
+        reject(new Error('Unable to determine location.'));
+      });
+    }
+
+    // check if geolocation is enabled
+    if (navigator.geolocation) {
+      // try browser first then attempt IP, set timeout to 1 sec for Safari hangups
+      navigator.geolocation.getCurrentPosition(posFromBrowser, posFromIP, { timeout: 1000 });
+    }
+
+    // if geolocation not available just use IP
+    else {
+      posFromIP();
+    }
+  });
+}
+
+function getUserWeather(coords) {
+  return new Promise((resolve, reject) => {
+    // treat ajax as promise
+    const getDarkSkyData = $.ajax({
+      url: `https://api.darksky.net/forecast/5d462c19218fb1f2697e53fefda9aac7/${coords.lat},${coords.lon}`,
+      dataType: 'jsonp',
+      async: true,
+    });
+
+    getDarkSkyData.then((json) => {
+      userData.weather.timeStampWeather = json.currently.time;
+      userData.weather.summary = json.currently.summary;
+      userData.weather.humidity = json.currently.humidity;
+      userData.weather.precipProb = json.currently.precipProbability;
+      userData.weather.icon = json.currently.icon;
+
+      userData.weather.imperial.temp = json.currently.temperature;
+      userData.weather.imperial.windSpeed = json.currently.windSpeed;
+
+      // convert data for metric system
+      userData.weather.metric.temp = ((userData.weather.imperial.temp - 32) * 5) / 9;
+      userData.weather.metric.windSpeed = userData.weather.imperial.windSpeed * 1.609344;
+
+      // Pass coords on to the next promise
+      resolve(coords);
+    })
+
+    .fail(() => {
+      reject(new Error('Unable to fetch weather from DarkSky.net.'));
+    });
+  });
+}
+
+// find user location with Reverse Geocode from google
+function getUserLocation(coords) {
+  // No reject case as all failures set location to unknown
+  return new Promise((resolve) => {
+    // treat ajax as promise
+    const getGeocodeLocation = $.ajax({
+      url: `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lon}&key=AIzaSyCP8GLrC7_6nQYpBJFfTn4YWfz8G42y80g`,
+      dataType: 'json',
+      async: true,
+    });
+
+    getGeocodeLocation.then((json) => {
+      // Handle the case where ther are no results from geocoding
+      if (json.status === 'ZERO_RESULTS') {
+        userData.location.locationText = 'Location Unknown';
+        resolve();
+      }
+
+      // find the city, state, and country from google geocode results
+      else {
+        for (let i = 0; i < json.results[0].address_components.length; i += 1) {
+          for (let j = 0; j < json.results[0].address_components[i].types.length; j += 1) {
+            const currType = json.results[0].address_components[i].types[j];
+            switch (currType) {
+              case 'country':
+              userData.location.country = json.results[0].address_components[i].short_name;
+              break;
+              case 'administrative_area_level_1':
+              userData.location.state = json.results[0].address_components[i].short_name;
+              break;
+              case 'locality':
+              userData.location.city = json.results[0].address_components[i].short_name;
+              break;
+              // no default
+            }
+          }
+        }
+
+        // Assemble the location text and remove empty values placing ',' between them
+        userData.location.locationText = `${userData.location.city}\u0009${userData.location.state}\u0009${userData.location.country}`;
+        userData.location.locationText = userData.location.locationText.trim().replace(/\t/g, ', ');
+        resolve();
+      }
+    })
+
+    .fail(() => {
+      // set location to unknown on fail
+      userData.location.locationText = 'Location Unknown';
+      resolve();
+    });
+  });
+}
 
 function printUserData(unitSystem) {
   // Fade all the data in at once
@@ -108,114 +237,19 @@ function printUserData(unitSystem) {
   }
 }
 
-function getMetricUserData() {
-  userData.weather.metric.temp = ((userData.weather.imperial.temp - 32) * 5) / 9;
-  userData.weather.metric.windSpeed = userData.weather.imperial.windSpeed * 1.609344;
-}
-
-function getUserWeather() {
-  const assembledURL = `https://api.darksky.net/forecast/5d462c19218fb1f2697e53fefda9aac7/${userData.position.lat},${userData.position.lon}`;
-  $.ajax({
-    url: assembledURL,
-    dataType: 'jsonp',
-    async: true,
-    success(json) {
-      userData.weather.timeStampWeather = json.currently.time;
-      userData.weather.summary = json.currently.summary;
-      userData.weather.humidity = json.currently.humidity;
-      userData.weather.precipProb = json.currently.precipProbability;
-      userData.weather.icon = json.currently.icon;
-
-      userData.weather.imperial.temp = json.currently.temperature;
-      userData.weather.imperial.windSpeed = json.currently.windSpeed;
-      getMetricUserData(); // Convert imperial data to metric
-      printUserData('imperial');
-    },
-    error() {
-      window.alert('Unable to fetch weather from forecast.io.');
-    },
+// Main Promise Chain
+// Get the data using promises
+getUserPosition()
+  .then(getUserWeather)
+  .then(getUserLocation)
+  .then(() => {
+    printUserData('imperial');
+  })
+  .catch((error) => {
+    // Display any errors to user
+    $('#error').fadeIn(1000);
+    $('#error').html(error.message);
   });
-}
-
-// find user location with Reverse Geocode from google
-function getUserLocation() {
-  const assembledURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userData.position.lat},${userData.position.lon}&key=AIzaSyCP8GLrC7_6nQYpBJFfTn4YWfz8G42y80g`;
-  $.ajax({
-    url: assembledURL,
-    dataType: 'json',
-    async: true,
-    success(json) {
-      // find the city, state, and country from google geocode results
-      for (let i = 0; i < json.results[0].address_components.length; i += 1) {
-        for (let j = 0; j < json.results[0].address_components[i].types.length; j += 1) {
-          const currType = json.results[0].address_components[i].types[j];
-          switch (currType) {
-            case 'country':
-              userData.location.country = json.results[0].address_components[i].short_name;
-              break;
-            case 'administrative_area_level_1':
-              userData.location.state = json.results[0].address_components[i].short_name;
-              break;
-            case 'locality':
-              userData.location.city = json.results[0].address_components[i].short_name;
-              break;
-            // no default
-          }
-        }
-      }
-
-      // Assemble the location text and remove empty values placing ',' between them
-      userData.location.locationText = `${userData.location.city}\u0009${userData.location.state}\u0009${userData.location.country}`;
-      userData.location.locationText = userData.location.locationText.trim().replace(/\t/g, ', ');
-      getUserWeather();
-    },
-    error() {
-      window.alert('City, State, Country data could not be found.');
-      getUserWeather();
-    },
-  });
-}
-
-
-function getUserPosition() {
-  // get position from browser
-  function posFromBrowser(position) {
-    userData.position.lat = position.coords.latitude;
-    userData.position.lon = position.coords.longitude;
-    getUserLocation();
-  }
-
-  // get position via IP
-  function posFromIP() {
-    $.ajax({
-      url: 'https://freegeoip.net/json/',
-      dataType: 'json',
-      async: true,
-      success(ipLoc) {
-        userData.position.lat = ipLoc.latitude;
-        userData.position.lon = ipLoc.longitude;
-        getUserLocation();
-      },
-      error() {
-        window.alert('Unable to determine location.');
-      },
-    });
-  }
-
-  // check if geolocation is enabled
-  if (navigator.geolocation) {
-    // try browser first then attempt IP, set timeout to 1 sec for Safari hangups
-    navigator.geolocation.getCurrentPosition(posFromBrowser, posFromIP, { timeout: 1000 });
-  }
-
-  // if geolocation not available just use IP
-  else {
-    posFromIP();
-  }
-}
-
-// start by getting user position
-getUserPosition();
 
 // toggle from C to F
 $('#degF').click(() => {
