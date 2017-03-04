@@ -1,7 +1,42 @@
 /* establish global variables for ESLint */
-/* global $ document */
-/* global window document */
-/* global navigator document */
+/* global window navigator document */
+
+import $ from 'jquery';
+
+// import all video files referenced from videoTagLookup (not parsed by webpack)
+import './img/clear-day.jpg';
+import './img/clear-day.mov';
+import './img/clear-day.mp4';
+import './img/clear-night.jpg';
+import './img/clear-night.mov';
+import './img/clear-night.mp4';
+import './img/cloudy.jpg';
+import './img/cloudy.mov';
+import './img/cloudy.mp4';
+import './img/fog.jpg';
+import './img/fog.mov';
+import './img/fog.mp4';
+import './img/partly-cloudy-day.jpg';
+import './img/partly-cloudy-day.mov';
+import './img/partly-cloudy-day.mp4';
+import './img/partly-cloudy-night.jpg';
+import './img/partly-cloudy-night.mov';
+import './img/partly-cloudy-night.mp4';
+import './img/rain.jpg';
+import './img/rain.mov';
+import './img/rain.mp4';
+import './img/snow.jpg';
+import './img/snow.mov';
+import './img/snow.mp4';
+import './img/thunderstorm.jpg';
+import './img/thunderstorm.mov';
+import './img/thunderstorm.mp4';
+import './img/wind.jpg';
+import './img/wind.mov';
+import './img/wind.mp4';
+
+// import custom styles for project
+import './index.scss';
 
 const userData = {
   location: {
